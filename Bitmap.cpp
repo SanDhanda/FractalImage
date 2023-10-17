@@ -48,6 +48,12 @@ bool Bitmap::write(string filename) {
 }
 
 void Bitmap::setPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
+	uint8_t* pPixel = m_pPixels.get();
+
+	pPixel += (3* y) * m_width + (3* x); //number of bytes in all rows we want + number of columns. x3 because of 3 bytes
+	pPixel[0] = blue;
+	pPixel[1] = red;
+	pPixel[2] = green;
 
 }
 
