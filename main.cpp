@@ -7,6 +7,8 @@
 #include <memory>
 #include <math.h>
 #include "ZoomList.h"
+#include "FractalCreator.h"
+#include "RGB.h"
 using namespace std;
 
 
@@ -14,54 +16,20 @@ using namespace std;
 int main() {
 	int const Width = 800;
 	int const Height = 600;
-	Bitmap bitmap(Width, Height);
 
-	double min = 99999999;
-	double max = -99999999;
+	RGB rgb1(4, 5, 6);
+	RGB rgb2(1, 2, 3);
+	RGB rgb3 = rgb1 - rgb2;
+	FractalCreator fc(Width, Height);
 
-	ZoomList zoomList(Width, Height);
-	zoomList.add(Zoom(Width / 2, Height / 2, 2.0/Width));
+	fc.AddRange(0.0, RGB(0, 0, 0));
+	fc.AddRange(0.3, RGB(255, 0, 0));
+	fc.AddRange(0.5, RGB(255, 255, 0));
+	fc.AddRange(1.0, RGB(255, 255, 255));
 
-	unique_ptr<int[]> histogram(new int[Mandlebrot::MAX_ITERATIONS] {0});
-	unique_ptr<int[]> fractal(new int[Width * Height] {0});
-
-	for (int y = 0; y < Height; y++) {
-		for (int x = 0; x < Width; x++) {
-
-			pair<double, double> coords = zoomList.doZoom(x, y);
-			int iterations = Mandlebrot::getIterations(coords.first, coords.second);
-			fractal[y * Width + x] = iterations;
-			if (iterations != Mandlebrot::MAX_ITERATIONS) {
-				histogram[iterations]++;
-			}
-		}
-	}
-
-	int total = 0;
-	for (int i = 0; i < Mandlebrot::MAX_ITERATIONS; i++) {
-		total += histogram[i];
-	}
-	for (int y = 0; y < Height; y++) {
-		for (int x = 0; x < Width; x++) {
-			uint8_t red = 0;
-			uint8_t blue = 0;
-			uint8_t green = 0;
-			int iterations = fractal[y * Width + x];
-
-			if (iterations != Mandlebrot::MAX_ITERATIONS) {
-
-				double hue = 0.0;
-				for (int i = 0; i <= iterations; i++) {
-					hue += ((double)histogram[i]) / total;
-				}
-				green = pow(255, hue);
-			}
-
-			bitmap.setPixel(x, y, red, green, blue);
-
-		}
-	}
-	bitmap.write("test.bmp");
+	fc.AddZoom(Zoom(295, Height - 202, 0.1));
+	fc.AddZoom(Zoom(312, Height - 304, 0.1));
+	fc.run("test3.bmp");
 
 	cout << "Finished" << endl;
 

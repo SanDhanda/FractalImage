@@ -17,7 +17,8 @@ private:
 	int m_height{ 0 };
 	std::vector<Zoom> zooms;
 public:
-	ZoomList(int widht, int height);
+	ZoomList();
+	ZoomList(int width, int height);
 	void add(const Zoom& zoom);
 	std::pair<double, double> doZoom(int x, int y);
 };
